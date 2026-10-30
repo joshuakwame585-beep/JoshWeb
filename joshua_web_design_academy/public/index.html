@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Joshua Web Design Academy</title>
+<style>
+:root{--navy:#101d38;--blue:#315efb;--bg:#f3f6fc;--ink:#17233b;--muted:#69758b;--line:#e3e9f3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#101d38,#263e72);color:white;padding:24px max(22px,calc((100% - 1100px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-size:19px;font-weight:800}.sub{font-size:12px;color:#c7d3ef;margin-top:5px}
+main{max-width:1100px;margin:28px auto;padding:0 18px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 8px 30px #24395b0b;margin-bottom:18px}
+h1{font-size:25px;margin:0 0 7px}h2{font-size:18px;margin:0 0 17px}.muted{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat{padding:17px;background:#f6f8fe;border:1px solid var(--line);border-radius:12px}.stat b{font-size:23px;display:block;margin-top:6px}
+label{display:block;font-size:12px;font-weight:700;margin:0 0 6px;color:#47536a}input,textarea{width:100%;border:1px solid #d8e0ed;border-radius:9px;padding:11px;font:inherit;font-size:14px;background:white;color:var(--ink)}
+textarea{min-height:95px;resize:vertical}.field{margin-bottom:13px}button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--blue);color:white}button.secondary{background:#edf1fb;color:#24395b}button.danger{background:#fff0f0;color:#b42318}button:disabled{opacity:.55;cursor:not-allowed}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:0 0 auto}.row .grow{flex:1}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:12px 9px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:11px;text-transform:uppercase}
+.badge{display:inline-block;background:#fff4db;color:#8a5b00;padding:5px 8px;border-radius:20px;font-size:11px;font-weight:700}
+.hidden{display:none!important}.notice{padding:11px 13px;border-radius:9px;background:#eff5ff;color:#284b93;font-size:13px;margin:12px 0}.error{background:#fff0f0;color:#a52828}.success{background:#eaf8ef;color:#176b36}
+#login{max-width:420px;margin:55px auto}.actions{display:flex;gap:6px;flex-wrap:wrap}.small{font-size:12px}
+@media(max-width:650px){.grid,.stats{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}main{margin:18px auto}.panel{padding:17px}table{min-width:650px}.tablewrap{overflow:auto}}
+</style></head>
+<body>
+<header><div><div class="brand">✦ Joshua Web Design Academy</div><div class="sub">Training administration portal</div></div><div class="small">ADMINISTRATION</div></header>
+<main>
+<section id="login" class="panel">
+<h1>Admin sign in</h1><p class="muted">Sign in to manage students, training fees and SMS reminders.</p>
+<div class="field"><label>ADMIN PASSWORD</label><input id="password" type="password" placeholder="Enter admin password"></div>
+<button id="loginBtn" onclick="login()">Sign in</button><div id="loginMsg" class="notice hidden"></div>
+</section>
+<section id="app" class="hidden">
+<div class="row" style="justify-content:space-between;margin-bottom:15px"><div><h1>Dashboard</h1><div class="muted">Manage your web design training payments.</div></div><button class="secondary" onclick="logout()">Log out</button></div>
+<div class="stats"><div class="stat"><span class="muted">Total students</span><b id="total">0</b></div><div class="stat"><span class="muted">Total fees due</span><b id="due">GH₵0.00</b></div><div class="stat"><span class="muted">Pending payments</span><b id="pending">0</b></div></div>
+<div class="grid">
+<section class="panel"><h2>Add a student / set fee</h2>
+<div class="field"><label>STUDENT NAME</label><input id="name" placeholder="Student full name"></div>
+<div class="field"><label>PHONE NUMBER (GHANA)</label><input id="phone" placeholder="0241234567"></div>
+<div class="field"><label>AMOUNT DUE (GH₵)</label><input id="amount" type="number" min="0" step="0.01" placeholder="e.g. 150"></div>
+<div class="field"><label>PAYMENT DEADLINE</label><input id="dueDate" type="date"></div>
+<button onclick="addStudent()">Add student</button><div id="addMsg" class="notice hidden"></div>
+</section>
+<section class="panel"><h2>SMS payment reminder</h2>
+<div class="field"><label>STUDENT NAME</label><input id="smsName" placeholder="Student name"></div>
+<div class="field"><label>PHONE NUMBER</label><input id="smsPhone" placeholder="0241234567"></div>
+<div class="field"><label>MESSAGE</label><textarea id="smsMessage">Hello, this is a reminder from Joshua Web Design Academy that your web design training fee is due. Kindly make arrangements for payment. Thank you.</textarea></div>
+<button onclick="sendSms()">Send SMS</button><div id="smsMsg" class="notice hidden"></div>
+<p class="muted small">SMS sending uses your Arkesel account credits. Only message people who have agreed to receive training/payment updates.</p>
+</section></div>
+<section class="panel"><div class="row" style="justify-content:space-between"><h2>Student records</h2><button class="secondary" onclick="loadStudents()">Refresh</button></div>
+<div class="tablewrap"><table><thead><tr><th>Student</th><th>Phone</th><th>Fee due</th><th>Deadline</th><th>Status</th><th>Actions</th></tr></thead><tbody id="students"><tr><td colspan="6">Loading…</td></tr></tbody></table></div>
+<div id="listMsg" class="notice hidden"></div></section>
+</section>
+</main>
+<script>
+let token = sessionStorage.getItem("jwda_token") || "";
+const $ = id => document.getElementById(id);
+function note(id,msg,type=""){const el=$(id);el.textContent=msg;el.className="notice "+type;}
+async function api(path,method="GET",body){const r=await fetch("/api/"+path,{method,headers:{"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{})},...(body?{body:JSON.stringify(body)}:{})});const d=await r.json().catch(()=>({error:"Unexpected server response"}));if(r.status===401){logout();throw Error(d.error||"Please sign in again.");}if(!r.ok)throw Error(d.error||"Request failed.");return d;}
+function showApp(){ $("login").classList.add("hidden");$("app").classList.remove("hidden");loadStudents();}
+function logout(){token="";sessionStorage.removeItem("jwda_token");$("app").classList.add("hidden");$("login").classList.remove("hidden");}
+async function login(){try{$("loginBtn").disabled=true;const d=await api("login","POST",{password:$("password").value});token=d.token;sessionStorage.setItem("jwda_token",token);showApp();}catch(e){note("loginMsg",e.message,"error");}finally{$("loginBtn").disabled=false;}}
+async function loadStudents(){try{const d=await api("students");const rows=d.students||[];$("students").innerHTML=rows.length?rows.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.phone)}</td><td>GH₵${Number(s.amount).toFixed(2)}</td><td>${esc(s.due_date)}</td><td><span class="badge">${esc(s.status)}</span></td><td><div class="actions"><button class="secondary" onclick="useForSms('${escAttr(s.name)}','${escAttr(s.phone)}','${Number(s.amount).toFixed(2)}','${escAttr(s.due_date)}')">SMS</button><button class="danger" onclick="removeStudent('${s.id}')">Delete</button></div></td></tr>`).join(""):'<tr><td colspan="6">No students added yet.</td></tr>';$("total").textContent=rows.length;$("pending").textContent=rows.filter(x=>x.status==="Pending").length;$("due").textContent="GH₵"+rows.reduce((a,x)=>a+Number(x.amount||0),0).toFixed(2);}catch(e){note("listMsg",e.message,"error");}}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function escAttr(v){return esc(v).replace(/`/g,"&#96;");}
+async function addStudent(){try{const d=await api("students","POST",{name:$("name").value,phone:$("phone").value,amount:$("amount").value,dueDate:$("dueDate").value});note("addMsg","Student added successfully.","success");$("name").value=$("phone").value=$("amount").value=$("dueDate").value="";await loadStudents();}catch(e){note("addMsg",e.message,"error");}}
+function useForSms(name,phone,amount,date){$("smsName").value=name;$("smsPhone").value=phone;$("smsMessage").value=`Hello ${name}, this is a payment reminder from Joshua Web Design Academy. Your web design training fee of GH₵${amount} is due by ${date}. Kindly make arrangements for payment. Thank you.`;window.scrollTo({top:0,behavior:"smooth"});}
+async function sendSms(){try{const d=await api("send-sms","POST",{name:$("smsName").value,phone:$("smsPhone").value,message:$("smsMessage").value});note("smsMsg","SMS accepted by Arkesel. Check your Arkesel delivery report for final delivery status.","success");}catch(e){note("smsMsg",e.message,"error");}}
+async function removeStudent(id){if(!confirm("Delete this student record?"))return;try{await api("students","DELETE",{id});loadStudents();}catch(e){note("listMsg",e.message,"error");}}
+if(token)showApp();
+</script></body></html>
