@@ -31,7 +31,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const result = await fetch("https://sms.sasusync.com/smssandbox/v1/send", {
+    const result = await fetch("https://sms.sasusync.com/api/v1/send", {
       method: "POST",
       headers: {
         "X-API-Key": apiKey,
