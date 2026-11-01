@@ -65,7 +65,19 @@ function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&l
 function escAttr(v){return esc(v).replace(/`/g,"&#96;");}
 async function addStudent(){try{const d=await api("students","POST",{name:$("name").value,phone:$("phone").value,amount:$("amount").value,dueDate:$("dueDate").value});note("addMsg","Student added successfully.","success");$("name").value=$("phone").value=$("amount").value=$("dueDate").value="";await loadStudents();}catch(e){note("addMsg",e.message,"error");}}
 function useForSms(name,phone,amount,date){$("smsName").value=name;$("smsPhone").value=phone;$("smsMessage").value=`Hello ${name}, this is a payment reminder from Joshua Web Design Academy. Your web design training fee of GH₵${amount} is due by ${date}. Kindly make arrangements for payment. Thank you.`;window.scrollTo({top:0,behavior:"smooth"});}
-async function sendSms(){try{const d=await api("send-sms","POST",{name:$("smsName").value,phone:$("smsPhone").value,message:$("smsMessage").value});note("smsMsg","SMS accepted by Arkesel. Check your Arkesel delivery report for final delivery status.","success");}catch(e){note("smsMsg",e.message,"error");}}
+async function sendSms(){
+  try {
+    const d = await api("send-sms","POST",{
+      name:$("smsName").value,
+      phone:$("smsPhone").value,
+      message:$("smsMessage").value
+    });
+
+    note("smsMsg", d.message || "SasuSync sandbox accepted the test request. No SMS was delivered.", "success");
+  } catch(e) {
+    note("smsMsg", e.message, "error");
+  }
+}
 async function removeStudent(id){if(!confirm("Delete this student record?"))return;try{await api("students","DELETE",{id});loadStudents();}catch(e){note("listMsg",e.message,"error");}}
 if(token)showApp();
 </script></body></html>
